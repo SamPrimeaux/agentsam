@@ -1,0 +1,1 @@
+{"component_id":"example","source":{"repository":"SamPrimeaux/agentsam","commit":"scaffold","paths":["src/lab/example/legacy/index.js"]},"compatibility_mode":"exact","observable_outputs":["return value"],"promotion":{"shadow_mode":"Run legacy and candidate on identical fixture input.","rollback":"Keep legacy selected."}}
