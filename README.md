@@ -30,3 +30,7 @@ Create a capsule:
 npm run component:new -- code-indexer
 npm run check
 ```
+
+## Large-file refactor program
+
+The lab now includes a staged program for preparing, characterizing, modularizing, and independently reviewing oversized `inneranimalmedia` components. Start with [`docs/plans/AGENTSAM-LARGE-FILE-REFACTOR-PROGRAM.md`](docs/plans/AGENTSAM-LARGE-FILE-REFACTOR-PROGRAM.md). The supplied baseline is intentionally marked unverified until regenerated from a pinned source commit.

@@ -1,0 +1,24 @@
+{
+  "status": "operator_supplied_unverified_baseline",
+  "recorded_at": "2026-08-01",
+  "source_repository": "SamPrimeaux/inneranimalmedia",
+  "source_commit": null,
+  "summary": {
+    "source_files": 2774,
+    "total_code_mb": 31.6,
+    "files_over_50kb": 71,
+    "files_over_100kb": 23,
+    "files_over_200kb": 6
+  },
+  "largest_files": [
+    { "path": "dashboard/Finance.js", "size_kb": 427.8, "approx_tokens": 109500 },
+    { "path": "dashboard/App.tsx", "size_kb": 249.4, "approx_tokens": 63800 },
+    { "path": "src/api/agent.js", "size_kb": 227.5, "approx_tokens": 58200 },
+    { "path": "dashboard/cms-editor/CmsEditorApp.tsx", "size_kb": 206.1, "approx_tokens": 52800 },
+    { "path": "dashboard/components/ChatAssistant/ChatAssistant.tsx", "size_kb": 190.9, "approx_tokens": 48900 },
+    { "path": "src/api/settings.js", "size_kb": 163.9, "approx_tokens": 42000 },
+    { "path": "src/core/catalog-tool-executor.js", "size_kb": 147.6, "approx_tokens": 37800 },
+    { "path": "src/core/agent-tool-loop.js", "size_kb": 143.9, "approx_tokens": 36800 }
+  ],
+  "warning": "Refresh this baseline from a pinned source commit before enforcing any gate or starting a refactor lane."
+}
