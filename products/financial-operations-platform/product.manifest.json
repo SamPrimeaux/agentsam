@@ -1,0 +1,103 @@
+{
+  "$schema": "./product.manifest.schema.json",
+  "product_id": "agentsam_financial_operations_platform",
+  "name": "AgentSam Financial Operations Platform",
+  "working_name": "FinancialOS",
+  "status": "proposed",
+  "version": "0.1.0",
+  "product_class": [
+    "financial-business-crm",
+    "fp-and-a",
+    "financial-intelligence",
+    "agent-platform"
+  ],
+  "delivery_modes": [
+    "internal-command-center",
+    "multi-tenant-saas",
+    "embedded-sdk",
+    "agent-and-connector-packages"
+  ],
+  "principles": [
+    "systems-of-record-remain-authoritative",
+    "source-lineage-for-material-claims",
+    "deterministic-financial-math",
+    "human-approval-for-binding-actions",
+    "tenant-isolation",
+    "replaceable-connectors",
+    "versioned-prompts-models-metrics-and-policies"
+  ],
+  "modules": [
+    "executive-hq",
+    "financial-crm",
+    "fp-and-a",
+    "accounting-intelligence",
+    "treasury",
+    "revenue-intelligence",
+    "procurement-and-spend",
+    "payroll-and-headcount",
+    "document-intelligence",
+    "reporting-and-board",
+    "risk-and-controls",
+    "workflow-and-approvals"
+  ],
+  "agents": [
+    "cfo",
+    "fp-and-a",
+    "controller",
+    "treasury",
+    "accounts-payable",
+    "accounts-receivable",
+    "revenue",
+    "board",
+    "audit",
+    "risk"
+  ],
+  "initial_connectors": [
+    "csv",
+    "excel",
+    "stripe",
+    "bank-feed"
+  ],
+  "future_connectors": [
+    "quickbooks",
+    "xero",
+    "netsuite",
+    "payroll",
+    "crm",
+    "gmail",
+    "outlook",
+    "google-drive",
+    "sharepoint"
+  ],
+  "initial_vertical_slice": {
+    "inputs": [
+      "stripe-or-sanitized-stripe-fixture",
+      "bank-csv",
+      "operating-plan-spreadsheet",
+      "customer-and-vendor-records"
+    ],
+    "outputs": [
+      "canonical-financial-graph",
+      "cash-position",
+      "monthly-revenue",
+      "monthly-spend",
+      "top-counterparties",
+      "runway",
+      "budget-versus-actuals",
+      "downside-scenario",
+      "source-linked-ai-explanation",
+      "executive-summary"
+    ]
+  },
+  "promotion_gates": [
+    "contract-documented",
+    "typed-inputs-and-outputs",
+    "tenant-policy-enforced",
+    "source-lineage-preserved",
+    "fixtures-present",
+    "tests-pass",
+    "agent-evals-pass",
+    "shadow-mode-reviewed",
+    "no-placeholder-workflows"
+  ]
+}
