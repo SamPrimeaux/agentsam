@@ -1,0 +1,47 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "agentsam",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-11-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "agentsam.inneranimalmedia.com",
+      "custom_domain": true
+    }
+  ],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*", "/health"]
+  },
+  "vars": {
+    "GIT_SHA": "dev"
+  },
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    }
+  },
+  "tail_consumers": [
+    {
+      "service": "inneranimalmedia-tail"
+    }
+  ],
+  "migrations": [
+    {
+      "tag": "v2-lab-surface",
+      "deleted_classes": ["MeauxCADSession"]
+    }
+  ]
+}

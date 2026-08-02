@@ -12,7 +12,9 @@ Isolated compatibility and refactoring laboratory for bounded Inner Animal Media
 
 ## Boundaries
 
-No production secrets, customer data, deployments, authoritative writes, automatic promotion, or automatic merge.
+- Separate Worker/repo from `inneranimalmedia` (`agentsam` → `https://agentsam.inneranimalmedia.com`).
+- No customer data / authoritative IAM tenant writes from this lab.
+- Ship lab UI: `npm run deploy` (syncs `public/` then `wrangler deploy`).
 
 ## First target
 

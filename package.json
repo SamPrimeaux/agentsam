@@ -10,9 +10,14 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "npm test && npm run validate:manifests",
+    "check": "npm test && npm run validate:manifests && node --check src/worker.js",
     "test": "node --test",
     "validate:manifests": "node scripts/validate-component-manifests.mjs",
-    "component:new": "node scripts/create-component-capsule.mjs"
+    "component:new": "node scripts/create-component-capsule.mjs",
+    "build:assets": "node scripts/sync-public-assets.mjs",
+    "deploy": "npm run build:assets && npx wrangler deploy --var GIT_SHA:$(git rev-parse HEAD)"
+  },
+  "devDependencies": {
+    "wrangler": "^4.118.0"
   }
 }

@@ -1,7 +1,7 @@
 # Agent Rules
 
-1. This repository is a laboratory, never a production deployment source.
-2. Never use production credentials, customer data, or authoritative stores.
+1. This repository is a laboratory. Its Worker is `agentsam` (`agentsam.inneranimalmedia.com`) — never the `inneranimalmedia` Worker.
+2. Never use production credentials, customer data, or authoritative stores from `inneranimalmedia` / customer tenants.
 3. One writing agent equals one branch, one checkout/worktree, and one ticket scope.
 4. Keep the imported legacy implementation frozen while compatibility is evaluated.
 5. Pin source repository, source commit, and imported paths in the component manifest.
