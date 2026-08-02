@@ -124,7 +124,7 @@
   .task-head{padding:16px 14px;font-size:12px;color:#7d879c;display:flex;justify-content:space-between;align-items:center}
   .month-row{height:25px;display:flex;align-items:center;color:#697287;font-size:10px;font-weight:800;text-transform:uppercase}
   .month-row span{padding-left:12px}
-  .day-row{height:49px;display:grid;grid-template-columns:repeat(28,48px)}
+  .day-row{height:49px;display:grid;grid-template-columns:repeat(var(--day-count,28),48px)}
   .day{
     border-left:1px solid #262d40;display:flex;flex-direction:column;align-items:center;justify-content:center;
     color:#8d96a9;font-size:10px;gap:4px
@@ -151,16 +151,26 @@
   .bar.orange{background:linear-gradient(90deg,#ff8d4c,#ffb06f);color:#3b1a08}
   .bar.blue{background:linear-gradient(90deg,#397fff,#67b4ff)}
   .bar.green{background:linear-gradient(90deg,#2ec788,#62e7b2);color:#083326}
+  .bar.gray{background:linear-gradient(90deg,#5a6478,#8a93a8);color:#0e121c}
+  .bar.red{background:linear-gradient(90deg,#ff4d6d,#ff7a8a)}
   .bar.blocked::after{content:"Blocked";margin-left:auto;background:rgba(65,0,12,.35);padding:2px 5px;border-radius:5px}
-  .today-line{position:absolute;top:0;bottom:0;left:144px;width:1px;background:#377dff;z-index:6;box-shadow:0 0 14px #377dff}
+  .today-line{position:absolute;top:0;bottom:0;left:0;width:1px;background:#377dff;z-index:6;box-shadow:0 0 14px #377dff;display:none}
+  .today-line.visible{display:block}
   .today-line::before{content:"";position:absolute;top:67px;left:-4px;width:9px;height:9px;border-radius:50%;background:#377dff}
+  .event-marker{
+    position:absolute;top:78px;bottom:8px;width:2px;background:rgba(255,201,92,.75);z-index:5;pointer-events:none
+  }
+  .event-marker span{
+    position:absolute;top:0;left:6px;white-space:nowrap;font-size:10px;color:#ffc95c;background:rgba(18,22,34,.85);
+    border:1px solid rgba(255,201,92,.35);border-radius:6px;padding:2px 6px
+  }
   .fab{
     position:fixed;right:24px;bottom:24px;width:54px;height:54px;border-radius:50%;border:0;
     background:linear-gradient(145deg,#ff6a74,#ff4fb0);font-size:26px;cursor:pointer;box-shadow:0 15px 34px rgba(255,79,148,.35);z-index:30
   }
   .drawer{
     position:fixed;top:0;right:-420px;width:400px;height:100vh;background:#121725;border-left:1px solid #293046;
-    z-index:50;box-shadow:-24px 0 70px rgba(0,0,0,.45);transition:.28s;padding:22px
+    z-index:50;box-shadow:-24px 0 70px rgba(0,0,0,.45);transition:.28s;padding:22px;overflow:auto
   }
   .drawer.open{right:0}
   .drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
@@ -222,46 +232,38 @@
 
   <aside class="sidebar">
     <div class="search">⌕ <input placeholder="Quick Find" /></div>
-    <button class="side-link">◌ My Tasks <span class="badge">7</span></button>
-    <button class="side-link">▦ Everything <span class="badge">36</span></button>
+    <button class="side-link">◌ My Tasks <span class="badge" id="myTasksBadge">0</span></button>
+    <button class="side-link">▦ Everything <span class="badge" id="everythingBadge">0</span></button>
 
     <div class="section-title">Favorites</div>
-    <button class="side-link">◇ Platform Roadmap <span class="badge">8</span></button>
-    <button class="side-link">◈ Deployments <span class="badge">3</span></button>
+    <button class="side-link">◇ Platform Roadmap</button>
+    <button class="side-link">◈ Deployments</button>
 
     <div class="section-title">Projects</div>
-    <button class="project-row active"><span class="dot" style="background:#b356e8"></span>AgentSam Platform <span class="badge">12</span></button>
+    <button class="project-row active"><span class="dot" style="background:#b356e8"></span><span id="sidebarProjectName">WorkGraph</span> <span class="badge" id="sidebarProjectCount">0</span></button>
     <div class="subprojects">
-      <button class="project-row active" data-project="AgentSam Platform">Timeline</button>
-      <button class="project-row" data-project="MCP Runtime">MCP Runtime</button>
-      <button class="project-row" data-project="Memory Pipeline">Memory Pipeline</button>
-      <button class="project-row" data-project="Design Studio">Design Studio</button>
+      <button class="project-row active" data-project="timeline">Timeline</button>
     </div>
-    <button class="project-row"><span class="dot" style="background:#61ddd5"></span>Companions CPAS <span class="badge">9</span></button>
-    <button class="project-row"><span class="dot" style="background:#ff6aab"></span>Meauxbility <span class="badge">6</span></button>
-    <button class="project-row"><span class="dot" style="background:#ff9c63"></span>Client Sites <span class="badge">14</span></button>
 
-    <div class="section-title">Operations</div>
-    <button class="side-link">◫ GitHub</button>
-    <button class="side-link">◧ Cloudflare</button>
-    <button class="side-link">◩ Supabase</button>
+    <div class="section-title">Actors</div>
+    <div id="actorList"></div>
   </aside>
 
   <main class="main">
     <header class="topbar">
       <div class="title-wrap">
         <div class="project-icon">▦</div>
-        <div class="title" id="projectTitle">AgentSam Platform</div>
+        <div class="title" id="projectTitle">WorkGraph</div>
       </div>
-      <div class="team"><span></span><span></span><span></span></div>
-      <div class="member-count">+ 9 agents</div>
+      <div class="team" id="teamAvatars"></div>
+      <div class="member-count" id="memberCount">+ 0 agents</div>
       <div class="view-tabs">
         <button class="view-tab" data-view="list">List</button>
         <button class="view-tab active" data-view="gantt">Gantt</button>
         <button class="view-tab" data-view="board">Board</button>
       </div>
       <div class="top-actions">
-        <button class="ghost">Today</button>
+        <button class="ghost" id="jumpToday">Today</button>
         <button class="primary">Share</button>
         <button class="ghost">•••</button>
       </div>
@@ -282,73 +284,28 @@
       <div class="gantt" id="gantt">
         <div class="task-col">
           <div class="head task-head"><span>Workstream</span><span>Owner</span></div>
-          <div class="task-row group"><span class="chev">▾</span><span class="task-name">Platform Foundation</span><span class="task-meta">6</span></div>
-          <div class="task-row"><span class="dot" style="background:#b356e8"></span><span class="task-name">Repository discovery</span><span class="task-meta">Sam</span></div>
-          <div class="task-row"><span class="dot" style="background:#b356e8"></span><span class="task-name">Manifest + AST indexing</span><span class="task-meta">A1</span></div>
-          <div class="task-row"><span class="dot" style="background:#b356e8"></span><span class="task-name">Embedding pipeline</span><span class="task-meta">A2</span></div>
-          <div class="task-row"><span class="dot" style="background:#b356e8"></span><span class="task-name">Search relevance tuning</span><span class="task-meta">A3</span></div>
-          <div class="task-row group"><span class="chev">▾</span><span class="task-name">MCP Runtime</span><span class="task-meta">4</span></div>
-          <div class="task-row"><span class="dot" style="background:#61ddd5"></span><span class="task-name">Tool contract normalization</span><span class="task-meta">A2</span></div>
-          <div class="task-row"><span class="dot" style="background:#61ddd5"></span><span class="task-name">Execution lane routing</span><span class="task-meta">A1</span></div>
-          <div class="task-row"><span class="dot" style="background:#61ddd5"></span><span class="task-name">Evidence + receipt rollups</span><span class="task-meta">A4</span></div>
-          <div class="task-row group"><span class="chev">▾</span><span class="task-name">Release</span><span class="task-meta">3</span></div>
-          <div class="task-row"><span class="dot" style="background:#ff9c63"></span><span class="task-name">Integration tests</span><span class="task-meta">QA</span></div>
-          <div class="task-row"><span class="dot" style="background:#5fa8ff"></span><span class="task-name">Preview deployment</span><span class="task-meta">Ops</span></div>
-          <div class="task-row"><span class="dot" style="background:#45d99c"></span><span class="task-name">Production release</span><span class="task-meta">Sam</span></div>
+          <div id="taskRows"></div>
         </div>
 
         <div class="timeline" id="timeline">
           <div class="head">
-            <div class="month-row"><span style="width:576px">August 2026</span><span>September 2026</span></div>
+            <div class="month-row" id="monthRow"></div>
             <div class="day-row" id="dayRow"></div>
           </div>
-          <div class="today-line"></div>
-          <div class="track-row"></div>
-          <div class="track-row"><div class="bar purple" style="left:24px;width:150px" data-task="Repository discovery"><span class="mini">SP</span>Repository discovery</div></div>
-          <div class="track-row"><div class="bar purple" style="left:126px;width:190px" data-task="Manifest + AST indexing"><span class="mini">A1</span>Manifest + AST indexing</div></div>
-          <div class="track-row"><div class="bar purple" style="left:270px;width:238px" data-task="Embedding pipeline"><span class="mini">A2</span>Embedding pipeline</div></div>
-          <div class="track-row"><div class="bar purple blocked" style="left:462px;width:230px" data-task="Search relevance tuning"><span class="mini">A3</span>Search tuning</div></div>
-          <div class="track-row"></div>
-          <div class="track-row"><div class="bar cyan" style="left:390px;width:244px" data-task="Tool contract normalization"><span class="mini">A2</span>Tool contracts</div></div>
-          <div class="track-row"><div class="bar cyan" style="left:580px;width:300px" data-task="Execution lane routing"><span class="mini">A1</span>Execution routing</div></div>
-          <div class="track-row"><div class="bar pink" style="left:760px;width:300px" data-task="Evidence + receipt rollups"><span class="mini">A4</span>Evidence rollups</div></div>
-          <div class="track-row"></div>
-          <div class="track-row"><div class="bar orange" style="left:700px;width:190px" data-task="Integration tests"><span class="mini">QA</span>Integration tests</div></div>
-          <div class="track-row"><div class="bar blue" style="left:865px;width:160px" data-task="Preview deployment"><span class="mini">OP</span>Preview deploy</div></div>
-          <div class="track-row"><div class="bar green" style="left:1030px;width:180px" data-task="Production release"><span class="mini">SP</span>Production release</div></div>
+          <div class="today-line" id="todayLine"></div>
+          <div id="eventMarkers"></div>
+          <div id="trackRows"></div>
         </div>
       </div>
 
       <div class="board" id="board">
-        <div class="columns">
-          <div class="column"><h3>Backlog · 4</h3>
-            <div class="ticket"><small>PLAT-142</small><p>Normalize Cloudflare handler contracts</p><small>Agent A2 · 3 pts</small></div>
-            <div class="ticket"><small>PLAT-145</small><p>Add deployment evidence rollups</p><small>Agent A4 · 5 pts</small></div>
-          </div>
-          <div class="column"><h3>In progress · 3</h3>
-            <div class="ticket"><small>PLAT-136</small><p>Manifest + AST indexing</p><small>Agent A1 · 72%</small></div>
-            <div class="ticket"><small>PLAT-139</small><p>Embedding pipeline</p><small>Agent A2 · 48%</small></div>
-          </div>
-          <div class="column"><h3>Review · 2</h3>
-            <div class="ticket"><small>PLAT-131</small><p>Repository discovery</p><small>Sam · awaiting review</small></div>
-          </div>
-          <div class="column"><h3>Done · 5</h3>
-            <div class="ticket"><small>PLAT-126</small><p>Context envelope v1</p><small>Shipped Aug 1</small></div>
-            <div class="ticket"><small>PLAT-122</small><p>Remote execution lane</p><small>Shipped Jul 29</small></div>
-          </div>
-        </div>
+        <div class="columns" id="boardColumns"></div>
       </div>
 
       <div class="list-view" id="listView">
         <table class="list-table">
-          <thead><tr><th>Task</th><th>Status</th><th>Owner</th><th>Start</th><th>Due</th><th>Progress</th></tr></thead>
-          <tbody>
-            <tr><td>Repository discovery</td><td>Review</td><td>Sam</td><td>Aug 3</td><td>Aug 6</td><td>100%</td></tr>
-            <tr><td>Manifest + AST indexing</td><td>In progress</td><td>A1</td><td>Aug 5</td><td>Aug 10</td><td>72%</td></tr>
-            <tr><td>Embedding pipeline</td><td>In progress</td><td>A2</td><td>Aug 8</td><td>Aug 14</td><td>48%</td></tr>
-            <tr><td>Search relevance tuning</td><td>Blocked</td><td>A3</td><td>Aug 12</td><td>Aug 18</td><td>18%</td></tr>
-            <tr><td>Integration tests</td><td>Planned</td><td>QA</td><td>Aug 17</td><td>Aug 22</td><td>0%</td></tr>
-          </tbody>
+          <thead><tr><th>Task</th><th>Status</th><th>Owner</th><th>Start</th><th>Due</th><th>Artifacts</th></tr></thead>
+          <tbody id="listBody"></tbody>
         </table>
       </div>
     </section>
@@ -359,99 +316,340 @@
 
 <aside class="drawer" id="drawer">
   <div class="drawer-head"><strong>Task details</strong><button class="close" id="closeDrawer">×</button></div>
-  <div class="status-pill">● In progress</div>
-  <h2 id="drawerTitle">Manifest + AST indexing</h2>
-  <p style="color:#8e98ad;line-height:1.6">Build the normalized repository manifest, parse supported file types, and write deterministic index receipts.</p>
+  <div class="status-pill" id="drawerStatus">● queued</div>
+  <h2 id="drawerTitle">Select a task</h2>
+  <p id="drawerSummary" style="color:#8e98ad;line-height:1.6">WorkGraph projection — open a bar or ticket to inspect evidence.</p>
   <div class="label">Overview</div>
   <div class="detail-grid">
-    <div class="card"><small>Owner</small><b>Agent A1</b></div>
-    <div class="card"><small>Progress</small><b>72%</b></div>
-    <div class="card"><small>Start</small><b>Aug 5</b></div>
-    <div class="card"><small>Due</small><b>Aug 10</b></div>
+    <div class="card"><small>Owner</small><b id="drawerOwner">—</b></div>
+    <div class="card"><small>Status</small><b id="drawerStatusText">—</b></div>
+    <div class="card"><small>Start</small><b id="drawerStart">—</b></div>
+    <div class="card"><small>Due</small><b id="drawerEnd">—</b></div>
   </div>
-  <div class="label">Linked work</div>
-  <div class="card"><small>Repository</small><b>SamPrimeaux/agentsam</b></div>
-  <div class="card" style="margin-top:8px"><small>Branch</small><b>feat/repo-manifest-v2</b></div>
-  <div class="label">Activity</div>
-  <div class="activity"><i></i><div><b>Index run completed</b><small style="display:block;color:#737e94">812 files · 0 errors · 4m ago</small></div></div>
-  <div class="activity"><i></i><div><b>Agent A1 updated progress</b><small style="display:block;color:#737e94">58% → 72% · 19m ago</small></div></div>
+  <div class="label">Artifacts / evidence</div>
+  <div class="card"><small>Artifacts</small><b id="drawerArtifacts">—</b></div>
+  <div class="card" style="margin-top:8px"><small>Evidence</small><b id="drawerEvidence">—</b></div>
+  <div class="label">Dependencies</div>
+  <div class="card"><small>Depends on</small><b id="drawerDeps">—</b></div>
 </aside>
 
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <h2 style="margin-top:0">Create task</h2>
     <label>Task name<input id="newTaskName" value="New platform task" /></label>
-    <label style="display:block;margin-top:14px">Workstream
-      <select><option>Platform Foundation</option><option>MCP Runtime</option><option>Release</option></select>
-    </label>
     <label style="display:block;margin-top:14px">Owner
-      <select><option>Agent A1</option><option>Agent A2</option><option>Sam</option><option>QA</option></select>
+      <select id="newTaskOwner"></select>
     </label>
     <div class="modal-actions"><button class="ghost" id="cancelModal">Cancel</button><button class="primary" id="createTask">Create task</button></div>
   </div>
 </div>
 
-<script>
+<script type="module">
+import { demoWorkGraph } from './prototype/data/demo-workgraph.js';
+import {
+  buildTimelineBars,
+  buildEventMarkers,
+  getWorkItemDetails,
+} from './prototype/renderers/workgraph-runtime.js';
+import { buildTimelineModel, getStatusClass } from './prototype/renderers/timeline-model.js';
+
+const DAY_W = 48;
+const DAY_NAMES = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const STATUS_BOARD = {
+  queued: 'Backlog',
+  running: 'In progress',
+  blocked: 'Blocked',
+  complete: 'Done',
+};
+
+const graph = demoWorkGraph;
+const model = buildTimelineModel(graph);
+const bars = buildTimelineBars(graph);
+const events = buildEventMarkers(graph);
+const actorsById = Object.fromEntries((graph.actors || []).map((a) => [a.id, a]));
+
+function parseDay(value) {
+  return new Date(`${value}T00:00:00`);
+}
+
+function formatShort(value) {
+  const d = parseDay(value);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function initials(name = '') {
+  return String(name)
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() || '')
+    .join('') || '?';
+}
+
+function dayIndex(date, rangeStart) {
+  return Math.round((date - rangeStart) / 86400000);
+}
+
+function computeRange() {
+  const starts = bars.map((b) => parseDay(b.start).getTime());
+  const ends = bars.map((b) => parseDay(b.end).getTime());
+  const min = Math.min(...starts);
+  const max = Math.max(...ends);
+  const start = new Date(min - 1 * 86400000);
+  const end = new Date(max + 2 * 86400000);
+  const days = Math.max(14, dayIndex(end, start) + 1);
+  return { start, days };
+}
+
+const range = computeRange();
+
+function renderChrome() {
+  document.getElementById('projectTitle').textContent = graph.title;
+  document.getElementById('sidebarProjectName').textContent = graph.title;
+  document.getElementById('sidebarProjectCount').textContent = String(bars.length);
+  document.getElementById('myTasksBadge').textContent = String(bars.filter((b) => b.owner === 'sam').length);
+  document.getElementById('everythingBadge').textContent = String(bars.length);
+
+  const agents = (graph.actors || []).filter((a) => a.type === 'agent');
+  document.getElementById('memberCount').textContent = `+ ${agents.length} agents`;
+  document.getElementById('teamAvatars').innerHTML = (graph.actors || [])
+    .slice(0, 3)
+    .map(() => '<span></span>')
+    .join('');
+
+  document.getElementById('actorList').innerHTML = (graph.actors || [])
+    .map((actor) => {
+      const count = bars.filter((b) => b.owner === actor.id).length;
+      return `<button class="side-link">${actor.type === 'agent' ? '◉' : '◇'} ${actor.name} <span class="badge">${count}</span></button>`;
+    })
+    .join('');
+
+  const ownerSelect = document.getElementById('newTaskOwner');
+  ownerSelect.innerHTML = (graph.actors || [])
+    .map((a) => `<option value="${a.id}">${a.name}</option>`)
+    .join('');
+}
+
+function renderDays() {
   const dayRow = document.getElementById('dayRow');
-  const names = ['M','T','W','T','F','S','S'];
-  for(let i=1;i<=28;i++){
-    const d=document.createElement('div');
-    d.className='day'+(i===3?' today':'');
-    d.innerHTML='<b>'+i+'</b><span>'+names[(i+4)%7]+'</span>';
-    dayRow.appendChild(d);
+  const monthRow = document.getElementById('monthRow');
+  dayRow.style.setProperty('--day-count', String(range.days));
+  dayRow.innerHTML = '';
+
+  const months = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  for (let i = 0; i < range.days; i++) {
+    const d = new Date(range.start.getTime() + i * 86400000);
+    const el = document.createElement('div');
+    const isToday = d.getTime() === today.getTime();
+    el.className = 'day' + (isToday ? ' today' : '');
+    el.innerHTML = `<b>${d.getDate()}</b><span>${DAY_NAMES[d.getDay()]}</span>`;
+    dayRow.appendChild(el);
+
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    const last = months[months.length - 1];
+    if (!last || last.key !== key) {
+      months.push({
+        key,
+        label: d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+        width: DAY_W,
+      });
+    } else {
+      last.width += DAY_W;
+    }
   }
 
-  const gantt=document.getElementById('gantt');
-  const board=document.getElementById('board');
-  const listView=document.getElementById('listView');
-  document.querySelectorAll('.view-tab').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      document.querySelectorAll('.view-tab').forEach(b=>b.classList.remove('active'));
+  monthRow.innerHTML = months
+    .map((m) => `<span style="width:${m.width}px">${m.label}</span>`)
+    .join('');
+
+  const todayOffset = dayIndex(today, range.start);
+  const todayLine = document.getElementById('todayLine');
+  if (todayOffset >= 0 && todayOffset < range.days) {
+    todayLine.style.left = `${todayOffset * DAY_W + DAY_W / 2}px`;
+    todayLine.classList.add('visible');
+  }
+}
+
+function openDrawer(itemId) {
+  const item = getWorkItemDetails(graph, itemId);
+  if (!item) return;
+  const owner = actorsById[item.owner];
+  document.getElementById('drawerTitle').textContent = item.title;
+  document.getElementById('drawerStatus').textContent = `● ${item.status}`;
+  document.getElementById('drawerStatusText').textContent = item.status;
+  document.getElementById('drawerOwner').textContent = owner?.name || item.owner;
+  document.getElementById('drawerStart').textContent = formatShort(item.start);
+  document.getElementById('drawerEnd').textContent = formatShort(item.end);
+  document.getElementById('drawerArtifacts').textContent = (item.artifacts || []).join(', ') || '—';
+  document.getElementById('drawerEvidence').textContent = (item.evidence || []).join(', ') || '—';
+  document.getElementById('drawerDeps').textContent = (item.dependencies || []).join(', ') || 'none';
+  document.getElementById('drawerSummary').textContent =
+    `Projection of WorkGraph item "${item.id}". Timeline is not the source of truth.`;
+  document.getElementById('drawer').classList.add('open');
+}
+
+function renderGantt() {
+  const taskRows = document.getElementById('taskRows');
+  const trackRows = document.getElementById('trackRows');
+  const eventHost = document.getElementById('eventMarkers');
+
+  taskRows.innerHTML = '';
+  trackRows.innerHTML = '';
+  eventHost.innerHTML = '';
+
+  const group = document.createElement('div');
+  group.className = 'task-row group';
+  group.innerHTML = `<span class="chev">▾</span><span class="task-name">${graph.title}</span><span class="task-meta">${bars.length}</span>`;
+  taskRows.appendChild(group);
+
+  const groupTrack = document.createElement('div');
+  groupTrack.className = 'track-row';
+  trackRows.appendChild(groupTrack);
+
+  for (const item of bars) {
+    const owner = actorsById[item.owner];
+    const statusClass = getStatusClass(item.status);
+    const start = parseDay(item.start);
+    const end = parseDay(item.end);
+    const left = dayIndex(start, range.start) * DAY_W;
+    const width = Math.max(DAY_W, (dayIndex(end, range.start) - dayIndex(start, range.start) + 1) * DAY_W);
+
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    row.innerHTML = `<span class="dot" style="background:#b356e8"></span><span class="task-name">${item.label}</span><span class="task-meta">${owner?.name || item.owner}</span>`;
+    taskRows.appendChild(row);
+
+    const track = document.createElement('div');
+    track.className = 'track-row';
+    const bar = document.createElement('div');
+    bar.className = `bar ${statusClass}` + (item.status === 'blocked' ? ' blocked' : '');
+    bar.style.left = `${left}px`;
+    bar.style.width = `${width}px`;
+    bar.dataset.taskId = item.id;
+    bar.innerHTML = `<span class="mini">${initials(owner?.name || item.owner)}</span>${item.label}`;
+    bar.addEventListener('click', () => openDrawer(item.id));
+    track.appendChild(bar);
+    trackRows.appendChild(track);
+  }
+
+  for (const event of events) {
+    const stamp = event.timestamp.slice(0, 10);
+    const idx = dayIndex(parseDay(stamp), range.start);
+    if (idx < 0 || idx >= range.days) continue;
+    const marker = document.createElement('div');
+    marker.className = 'event-marker';
+    marker.style.left = `${idx * DAY_W + DAY_W / 2}px`;
+    marker.innerHTML = `<span>${event.label}</span>`;
+    eventHost.appendChild(marker);
+  }
+}
+
+function renderBoard() {
+  const columns = ['queued', 'running', 'blocked', 'complete'];
+  const host = document.getElementById('boardColumns');
+  host.innerHTML = columns
+    .map((status) => {
+      const items = bars.filter((b) => b.status === status);
+      const tickets = items
+        .map((item) => {
+          const owner = actorsById[item.owner];
+          return `<div class="ticket" data-task-id="${item.id}"><small>${item.id}</small><p>${item.label}</p><small>${owner?.name || item.owner} · ${formatShort(item.start)} → ${formatShort(item.end)}</small></div>`;
+        })
+        .join('');
+      return `<div class="column"><h3>${STATUS_BOARD[status]} · ${items.length}</h3>${tickets || '<div class="ticket"><small>empty</small><p>No items</p></div>'}</div>`;
+    })
+    .join('');
+
+  host.querySelectorAll('.ticket[data-task-id]').forEach((el) => {
+    el.addEventListener('click', () => openDrawer(el.dataset.taskId));
+  });
+}
+
+function renderList() {
+  const body = document.getElementById('listBody');
+  body.innerHTML = bars
+    .map((item) => {
+      const owner = actorsById[item.owner];
+      return `<tr data-task-id="${item.id}" style="cursor:pointer"><td>${item.label}</td><td>${item.status}</td><td>${owner?.name || item.owner}</td><td>${formatShort(item.start)}</td><td>${formatShort(item.end)}</td><td>${(item.artifacts || []).length}</td></tr>`;
+    })
+    .join('');
+  body.querySelectorAll('tr[data-task-id]').forEach((row) => {
+    row.addEventListener('click', () => openDrawer(row.dataset.taskId));
+  });
+}
+
+function bindChrome() {
+  const gantt = document.getElementById('gantt');
+  const board = document.getElementById('board');
+  const listView = document.getElementById('listView');
+  document.querySelectorAll('.view-tab').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.view-tab').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
-      gantt.classList.toggle('hidden',btn.dataset.view!=='gantt');
-      board.classList.toggle('active',btn.dataset.view==='board');
-      listView.classList.toggle('active',btn.dataset.view==='list');
+      gantt.classList.toggle('hidden', btn.dataset.view !== 'gantt');
+      board.classList.toggle('active', btn.dataset.view === 'board');
+      listView.classList.toggle('active', btn.dataset.view === 'list');
     });
   });
 
-  const drawer=document.getElementById('drawer');
-  document.querySelectorAll('.bar,.ticket').forEach(el=>el.addEventListener('click',()=>{
-    document.getElementById('drawerTitle').textContent=el.dataset.task || el.querySelector('p')?.textContent || 'Task';
-    drawer.classList.add('open');
-  }));
-  document.getElementById('closeDrawer').onclick=()=>drawer.classList.remove('open');
-
-  const modal=document.getElementById('modal');
-  document.getElementById('addTask').onclick=()=>modal.classList.add('open');
-  document.getElementById('cancelModal').onclick=()=>modal.classList.remove('open');
-  document.getElementById('createTask').onclick=()=>{
+  document.getElementById('closeDrawer').onclick = () => document.getElementById('drawer').classList.remove('open');
+  const modal = document.getElementById('modal');
+  document.getElementById('addTask').onclick = () => modal.classList.add('open');
+  document.getElementById('cancelModal').onclick = () => modal.classList.remove('open');
+  document.getElementById('createTask').onclick = () => {
     modal.classList.remove('open');
-    const name=document.getElementById('newTaskName').value.trim() || 'New task';
-    alert('Demo task created: '+name);
+    const name = document.getElementById('newTaskName').value.trim() || 'New task';
+    alert(`Demo only — would append "${name}" to WorkGraph (not persisted).`);
   };
-  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('open');
+  });
+  document.getElementById('assignedToggle').onclick = function () {
+    this.classList.toggle('on');
+  };
 
-  document.getElementById('assignedToggle').onclick=function(){this.classList.toggle('on')};
-
-  let zoom=100;
-  const timeline=document.getElementById('timeline');
-  function setZoom(){
-    document.getElementById('zoomLabel').textContent=zoom+'%';
-    timeline.style.transformOrigin='top left';
-    timeline.style.zoom=zoom/100;
+  let zoom = 100;
+  const timeline = document.getElementById('timeline');
+  function setZoom() {
+    document.getElementById('zoomLabel').textContent = `${zoom}%`;
+    timeline.style.transformOrigin = 'top left';
+    timeline.style.zoom = zoom / 100;
   }
-  document.getElementById('zoomIn').onclick=()=>{zoom=Math.min(140,zoom+10);setZoom()};
-  document.getElementById('zoomOut').onclick=()=>{zoom=Math.max(70,zoom-10);setZoom()};
+  document.getElementById('zoomIn').onclick = () => {
+    zoom = Math.min(140, zoom + 10);
+    setZoom();
+  };
+  document.getElementById('zoomOut').onclick = () => {
+    zoom = Math.max(70, zoom - 10);
+    setZoom();
+  };
+  document.getElementById('jumpToday').onclick = () => {
+    const line = document.getElementById('todayLine');
+    if (line.classList.contains('visible')) {
+      line.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  };
 
-  document.querySelectorAll('[data-project]').forEach(btn=>btn.onclick=()=>{
-    document.querySelectorAll('[data-project]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('projectTitle').textContent=btn.dataset.project;
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.getElementById('drawer').classList.remove('open');
+      modal.classList.remove('open');
+    }
   });
 
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Escape'){drawer.classList.remove('open');modal.classList.remove('open')}
-  });
+  // Keep model in scope for console inspection during prototype work.
+  window.__workgraph = { graph, model, bars, events };
+}
+
+renderChrome();
+renderDays();
+renderGantt();
+renderBoard();
+renderList();
+bindChrome();
 </script>
 </body>
 </html>
