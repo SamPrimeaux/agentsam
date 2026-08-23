@@ -7,15 +7,19 @@
     "node": ">=20"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "app/*"
   ],
   "scripts": {
-    "check": "npm test && npm run validate:manifests && node --check src/worker.js",
+    "check": "npm test && npm run validate:manifests && npm run guard:mobile-lane && node --check src/worker.js",
     "test": "node --test",
     "validate:manifests": "node scripts/validate-component-manifests.mjs",
     "component:new": "node scripts/create-component-capsule.mjs",
     "build:assets": "node scripts/sync-public-assets.mjs",
-    "deploy": "npm run build:assets && npx wrangler deploy --var GIT_SHA:$(git rev-parse HEAD)"
+    "deploy": "npm run build:assets && npx wrangler deploy --var GIT_SHA:$(git rev-parse HEAD)",
+    "dev:mobile": "npm run dev --workspace @inneranimalmedia/mobile",
+    "build:mobile": "npm run build --workspace @inneranimalmedia/mobile",
+    "guard:mobile-lane": "node scripts/guard-mobile-lane.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.118.0"

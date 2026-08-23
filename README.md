@@ -33,6 +33,15 @@ npm run component:new -- code-indexer
 npm run check
 ```
 
+## Mobile client lab (`app/mobile`)
+
+Rapid-fire mobile dashboards and Agent Sam tab UX — relocated from `inneranimalmedia/mobile/`. See [`docs/app-mobile-lab.md`](docs/app-mobile-lab.md).
+
+```bash
+npm run dev:mobile    # Vite :3010, proxies /api → local IAM worker :8787
+npm run build:mobile
+```
+
 ## Large-file refactor program
 
 The lab now includes a staged program for preparing, characterizing, modularizing, and independently reviewing oversized `inneranimalmedia` components. Start with [`docs/plans/AGENTSAM-LARGE-FILE-REFACTOR-PROGRAM.md`](docs/plans/AGENTSAM-LARGE-FILE-REFACTOR-PROGRAM.md). The supplied baseline is intentionally marked unverified until regenerated from a pinned source commit.
